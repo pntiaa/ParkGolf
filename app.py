@@ -3,32 +3,22 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-
 st.set_page_config(layout="wide")
 
+@st.cache_resource
+def load_members_from_excel():
+    # Load the Excel file
+    file_path = r'./다솜회_순위집계.xlsx'
+    df = pd.read_excel(file_path, sheet_name="회원명부")
+    members = {}
+    for _, row in df.iloc[1:].iterrows():  # Skip the first row which is the title
+        name = row["회원이름"]
+        gender = row["성별"]
+        members[name] = {"available": True, "gender": gender}
+    return members
 
-
-# Define example members (removed scores)
-members = {
-    "임흥식": {"available": True, "gender": "Male"},
-    "김경애": {"available": True, "gender": "Female"},
-    "주기자": {"available": True, "gender": "Female"},
-    "김순옥": {"available": True, "gender": "Female"},
-    "박재열": {"available": True, "gender": "Male"},
-    "심상은": {"available": True, "gender": "Female"},
-    "김복숙": {"available": True, "gender": "Female"},
-    "정말순": {"available": True, "gender": "Male"},
-    "조낙문": {"available": True, "gender": "Female"},
-    "하상옥": {"available": True, "gender": "Male"},
-    "조효용": {"available": True, "gender": "Female"},
-    "남영희": {"available": True, "gender": "Female"},
-    "이덕희": {"available": True, "gender": "Male"},
-    "정상범": {"available": True, "gender": "Male"},
-    "장분리": {"available": True, "gender": "Male"},
-    "이영길": {"available": True, "gender": "Male"},
-    "박연주": {"available": True, "gender": "Female"},
-    "김광순": {"available": True, "gender": "Male"},
-}
+# Load members from the Excel file
+members = load_members_from_excel()
 
 def allocate_groups_random(members_list):
     """Randomly allocate members to groups of approximately equal size"""
@@ -43,7 +33,6 @@ def allocate_groups_random(members_list):
             groups[i % len(groups)].append(member)
     
     return groups
-
 
 # Initialize score structure for a player
 def init_player_scores():
